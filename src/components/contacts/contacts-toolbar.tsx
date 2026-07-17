@@ -27,7 +27,9 @@ export function ContactsToolbar() {
 
   function handleSearch(value: string) {
     setSearchValue(value);
-    clearTimeout(debounceRef.current);
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
     debounceRef.current = setTimeout(() => {
       updateParams(value || null, currentStatus);
     }, 300);
