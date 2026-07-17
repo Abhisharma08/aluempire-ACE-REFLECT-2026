@@ -35,7 +35,7 @@ export default function LoginPage() {
             <Users className="w-8 h-8 text-white" />
           </div>
           <div className="text-center">
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900">FollowUp</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900">Alu Empire</h1>
             <p className="text-sm text-gray-500">Contact Dashboard</p>
           </div>
         </div>

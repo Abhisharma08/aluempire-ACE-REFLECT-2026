@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Follow-up Dashboard",
+  title: "Alu Empire Dashboard",
   description: "Contact management and follow-up automation tool.",
 };
 

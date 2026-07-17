@@ -11,7 +11,7 @@ const navItems = [
   { name: "Contacts", href: "/contacts", icon: Users },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ adminEmail = "admin@example.com" }: { adminEmail?: string }) {
   const pathname = usePathname();
 
   return (
@@ -22,7 +22,7 @@ export default function Sidebar() {
           <Users className="w-5 h-5 text-white" />
         </div>
         <div>
-          <h1 className="text-xl font-bold tracking-tight">FollowUp</h1>
+          <h1 className="text-xl font-bold tracking-tight">Alu Empire</h1>
           <p className="text-xs text-indigo-200/60 font-medium">Contact Dashboard</p>
         </div>
       </div>
@@ -58,11 +58,13 @@ export default function Sidebar() {
         <div className="flex items-center justify-between p-3 bg-[#111832] rounded-xl cursor-pointer hover:bg-white/5 transition-all duration-200 border border-transparent hover:border-[#1a1f35]">
           <div className="flex items-center gap-3">
             <Avatar className="h-9 w-9 bg-indigo-600">
-              <AvatarFallback className="bg-indigo-600 text-white font-semibold">A</AvatarFallback>
+              <AvatarFallback className="bg-indigo-600 text-white font-semibold">
+                {adminEmail.charAt(0).toUpperCase()}
+              </AvatarFallback>
             </Avatar>
             <div className="overflow-hidden">
-              <p className="text-sm font-medium text-white truncate">Admin</p>
-              <p className="text-xs text-slate-400 truncate">admin@example.com</p>
+              <p className="text-sm font-medium text-white truncate">Administrator</p>
+              <p className="text-xs text-slate-400 truncate">{adminEmail}</p>
             </div>
           </div>
           <ChevronDown className="w-4 h-4 text-slate-500" />
