@@ -110,3 +110,13 @@ export async function findContactByEmail(email: string): Promise<Contact | null>
   const contacts = await getContacts();
   return contacts.find(c => c.email.toLowerCase() === email.toLowerCase()) || null;
 }
+
+export async function getContactById(id: string): Promise<Contact | null> {
+  const contacts = await getContacts();
+  return contacts.find(c => c.id === id) || null;
+}
+
+export async function findContactByToken(token: string): Promise<Contact | null> {
+  const contacts = await getContacts();
+  return contacts.find(c => c.unsubscribe_token === token) || null;
+}

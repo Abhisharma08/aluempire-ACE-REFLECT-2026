@@ -95,6 +95,7 @@ export default async function ContactsPage() {
                     return (
                       <ContactRow 
                         key={contact.id}
+                        id={contact.id}
                         name={contact.name} 
                         email={contact.email} 
                         phone={contact.phone} 
@@ -127,7 +128,7 @@ export default async function ContactsPage() {
   );
 }
 
-function ContactRow({ name, email, phone, initials, color, company, location, consent, status, step, added }: any) {
+function ContactRow({ id, name, email, phone, initials, color, company, location, consent, status, step, added }: any) {
   let statusBadge;
   if (status === "Active") {
     statusBadge = <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 border border-emerald-200"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>{status}</Badge>;
@@ -176,7 +177,9 @@ function ContactRow({ name, email, phone, initials, color, company, location, co
           <DropdownMenuContent align="end" className="w-[160px]">
             <DropdownMenuGroup>
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem>View details</DropdownMenuItem>
+              <Link href={`/contacts/${id}`}>
+                <DropdownMenuItem>View details</DropdownMenuItem>
+              </Link>
               <DropdownMenuItem>Edit contact</DropdownMenuItem>
               <DropdownMenuSeparator />
               {status === "Active" ? (
