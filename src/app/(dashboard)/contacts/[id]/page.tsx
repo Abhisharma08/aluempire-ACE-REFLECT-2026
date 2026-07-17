@@ -146,26 +146,21 @@ export default async function ContactDetailsPage({
             </div>
 
             <div className="pt-4 border-t border-gray-100">
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Follow-up Progress</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Welcome Email</h4>
               <div className="space-y-4">
                 <div>
-                  <p className="text-xs text-gray-500">Current Step</p>
+                  <p className="text-xs text-gray-500">Status</p>
                   <p className="text-sm font-medium text-gray-900 mt-1">
-                    {contact.current_step === "0" ? "Not started" : `Step ${contact.current_step}`}
-                  </p>
-                </div>
-                
-                <div>
-                  <p className="text-xs text-gray-500">Next Scheduled Run</p>
-                  <p className="text-sm font-medium text-gray-900 mt-1">
-                    {contact.next_followup_at ? new Date(contact.next_followup_at).toLocaleString() : "None"}
+                    {contact.current_step === "0" && contact.status !== "COMPLETED"
+                      ? "Pending"
+                      : "Sent ✓"}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500">Last Sent Run</p>
+                  <p className="text-xs text-gray-500">Sent On</p>
                   <p className="text-sm font-medium text-gray-900 mt-1">
-                    {contact.last_followup_at ? new Date(contact.last_followup_at).toLocaleString() : "Never"}
+                    {contact.last_followup_at ? new Date(contact.last_followup_at).toLocaleString() : "Not yet sent"}
                   </p>
                 </div>
               </div>

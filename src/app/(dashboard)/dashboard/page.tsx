@@ -51,14 +51,11 @@ export default async function Dashboard() {
   let dueTomorrowCount = 0;
   let dueThisWeekCount = 0;
 
-  // Calculate Progress Steps
-  const stepCounts: Record<string, number> = {};
+  // Count contacts awaiting their welcome email
+  const pendingEmailCount = contacts.filter(c => c.status === 'ACTIVE' && c.current_step === '0').length;
+  const emailedCount = contacts.filter(c => c.current_step !== '0' || c.status === 'COMPLETED').length;
 
   contacts.forEach(c => {
-    if (c.current_step && c.current_step !== '0') {
-      stepCounts[c.current_step] = (stepCounts[c.current_step] || 0) + 1;
-    }
-
     if (c.next_followup_at) {
       const nextDate = new Date(c.next_followup_at);
       if (nextDate >= today && nextDate < tomorrow) dueTodayCount++;
@@ -66,8 +63,6 @@ export default async function Dashboard() {
       if (nextDate >= today && nextDate < nextWeek) dueThisWeekCount++;
     }
   });
-
-  const maxStepCount = Math.max(1, ...Object.values(stepCounts), completedContacts);
 
   return (
     <div className="flex flex-col min-h-full">
@@ -115,9 +110,9 @@ export default async function Dashboard() {
             sparklineColor="border-blue-400"
           />
           <MetricCard 
-            title="Due Today" 
-            value={dueTodayCount.toString()} 
-            subtitle="Need follow-up" 
+            title="Pending Emails" 
+            value={pendingEmailCount.toString()} 
+            subtitle="Awaiting welcome email" 
             icon={<Clock className="w-5 h-5 text-amber-600" />} 
             iconBg="bg-amber-100" 
             sparklineColor="border-amber-400"
@@ -136,8 +131,7 @@ export default async function Dashboard() {
                 <TableHead className="font-medium text-gray-600 w-[250px]">Contact</TableHead>
                 <TableHead className="font-medium text-gray-600">Company</TableHead>
                 <TableHead className="font-medium text-gray-600 w-[120px]">Status</TableHead>
-                <TableHead className="font-medium text-gray-600 w-[100px]">Follow-up</TableHead>
-                <TableHead className="font-medium text-gray-600 w-[120px]">Next Email</TableHead>
+                <TableHead className="font-medium text-gray-600 w-[120px]">Email Sent</TableHead>
                 <TableHead className="font-medium text-gray-600 whitespace-nowrap w-[100px]">Added</TableHead>
               </TableRow>
             </TableHeader>
@@ -161,12 +155,6 @@ export default async function Dashboard() {
                   }
 
                   let nextDate = "";
-                  try {
-                    nextDate = contact.next_followup_at ? new Date(contact.next_followup_at).toLocaleDateString() : '—';
-                  } catch(e) {
-                    nextDate = contact.next_followup_at;
-                  }
-
                   return (
                     <ContactRow 
                       key={contact.id}
@@ -176,8 +164,7 @@ export default async function Dashboard() {
                       color={color} 
                       company={contact.company} 
                       status={contact.status} 
-                      step={contact.current_step === '0' ? '—' : `Step ${contact.current_step}`} 
-                      next={nextDate} 
+                      emailSent={contact.current_step !== '0' || contact.status === 'COMPLETED' ? 'Yes' : 'No'} 
                       added={added} 
                     />
                   );
@@ -216,39 +203,38 @@ export default async function Dashboard() {
           </Card>
           
           <Card className="rounded-xl border-gray-100 shadow-sm p-6 lg:col-span-1">
-            <h3 className="font-semibold text-sm mb-4 text-gray-700">Follow-up Progress</h3>
+            <h3 className="font-semibold text-sm mb-4 text-gray-700">Email Status</h3>
             <div className="space-y-3">
-              {[1, 2, 3, 4].map(step => (
-                <ProgressRow key={`step-${step}`} label={`Step ${step}`} value={stepCounts[step.toString()] || 0} max={maxStepCount} />
-              ))}
-              <ProgressRow label="Completed" value={completedContacts} max={maxStepCount} isCompleted />
+              <ProgressRow label="Pending" value={pendingEmailCount} max={Math.max(1, totalContacts)} />
+              <ProgressRow label="Sent" value={emailedCount} max={Math.max(1, totalContacts)} />
+              <ProgressRow label="Failed" value={failedContacts} max={Math.max(1, totalContacts)} isCompleted />
             </div>
           </Card>
 
           <Card className="rounded-xl border-gray-100 shadow-sm p-6 lg:col-span-1">
             <div className="flex items-center gap-2 mb-4 text-gray-700">
               <Calendar className="w-4 h-4 text-indigo-600" />
-              <h3 className="font-semibold text-sm">Upcoming Follow-ups</h3>
+              <h3 className="font-semibold text-sm">Pending Emails</h3>
             </div>
             <div className="space-y-4 text-sm mt-6">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2 text-red-600 font-medium">
                   <div className="w-4 h-4 rounded bg-red-100 flex items-center justify-center"><Calendar className="w-3 h-3" /></div>
-                  Today
+                  Due Today
                 </div>
                 <span className="font-bold text-red-600">{dueTodayCount}</span>
               </div>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2 text-gray-600">
                   <div className="w-4 h-4 rounded bg-gray-100 flex items-center justify-center"><Calendar className="w-3 h-3 text-gray-500" /></div>
-                  Tomorrow
+                  Due Tomorrow
                 </div>
                 <span className="font-medium text-gray-900">{dueTomorrowCount}</span>
               </div>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2 text-gray-600">
                   <div className="w-4 h-4 rounded bg-gray-100 flex items-center justify-center"><Calendar className="w-3 h-3 text-gray-500" /></div>
-                  This Week
+                  Due This Week
                 </div>
                 <span className="font-medium text-gray-900">{dueThisWeekCount}</span>
               </div>
@@ -329,7 +315,7 @@ function MetricCard({ title, value, subtitle, icon, iconBg, sparklineColor }: an
   );
 }
 
-function ContactRow({ name, email, initials, color, company, status, step, next, added }: any) {
+function ContactRow({ name, email, initials, color, company, status, emailSent, added }: any) {
   let statusBadge;
   if (status === "ACTIVE" || status === "Active") {
     statusBadge = <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 border border-emerald-200"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>{status}</Badge>;
@@ -340,6 +326,10 @@ function ContactRow({ name, email, initials, color, company, status, step, next,
   } else {
     statusBadge = <Badge variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-50 border border-blue-200"><span className="w-1.5 h-1.5 rounded-full bg-blue-500 mr-1.5"></span>{status}</Badge>;
   }
+
+  const emailBadge = emailSent === 'Yes'
+    ? <span className="text-emerald-600 text-xs font-medium bg-emerald-50 px-2 py-1 rounded-md">Sent ✓</span>
+    : <span className="text-gray-500 text-xs font-medium bg-gray-100 px-2 py-1 rounded-md">Pending</span>;
 
   return (
     <TableRow>
@@ -356,8 +346,7 @@ function ContactRow({ name, email, initials, color, company, status, step, next,
       </TableCell>
       <TableCell className="text-gray-600">{company}</TableCell>
       <TableCell>{statusBadge}</TableCell>
-      <TableCell className="text-gray-600">{step}</TableCell>
-      <TableCell className="text-gray-600">{next}</TableCell>
+      <TableCell>{emailBadge}</TableCell>
       <TableCell className="text-gray-600">{added}</TableCell>
     </TableRow>
   );

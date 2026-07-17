@@ -1,5 +1,5 @@
 {
-  "name": "Alu Empire - Follow-up Automation",
+  "name": "Alu Empire - Welcome Email Automation",
   "nodes": [
     {
       "parameters": {
@@ -72,8 +72,17 @@
               }
             },
             {
-              "id": "condition-has-next",
-              "leftValue": "={{ $json.next_followup_at }}",
+              "id": "condition-not-sent",
+              "leftValue": "={{ $json.current_step }}",
+              "rightValue": "0",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "condition-has-email",
+              "leftValue": "={{ $json.email }}",
               "rightValue": "",
               "operator": {
                 "type": "string",
@@ -85,7 +94,7 @@
         }
       },
       "id": "filter-eligible",
-      "name": "Filter Eligible Contacts",
+      "name": "Filter: Opted-In & Not Yet Emailed",
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2.2,
       "position": [500, 300]
@@ -141,7 +150,7 @@
         }
       },
       "id": "recheck-contact",
-      "name": "Re-Check Contact State",
+      "name": "Re-Check Consent",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
       "position": [1000, 300],
@@ -178,15 +187,6 @@
                 "type": "string",
                 "operation": "equals"
               }
-            },
-            {
-              "id": "recheck-has-email",
-              "leftValue": "={{ $json.email }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "notEmpty"
-              }
             }
           ],
           "combinator": "and"
@@ -200,211 +200,18 @@
     },
     {
       "parameters": {
-        "rules": {
-          "values": [
-            {
-              "conditions": {
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.current_step }}",
-                    "rightValue": "0",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  }
-                ]
-              },
-              "renameOutput": "Step 0 - Introduction"
-            },
-            {
-              "conditions": {
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.current_step }}",
-                    "rightValue": "1",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  }
-                ]
-              },
-              "renameOutput": "Step 1 - First Follow-up"
-            },
-            {
-              "conditions": {
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.current_step }}",
-                    "rightValue": "2",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  }
-                ]
-              },
-              "renameOutput": "Step 2 - Second Follow-up"
-            },
-            {
-              "conditions": {
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.current_step }}",
-                    "rightValue": "3",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  }
-                ]
-              },
-              "renameOutput": "Step 3 - Final Follow-up"
-            }
-          ]
-        }
-      },
-      "id": "select-template",
-      "name": "Select Email Template",
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3.2,
-      "position": [1500, 300]
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "subject",
-              "name": "emailSubject",
-              "value": "=Welcome to Alu Empire, {{ $json.name }}!",
-              "type": "string"
-            },
-            {
-              "id": "body",
-              "name": "emailBody",
-              "value": "=Hi {{ $json.name }},\n\nThank you for connecting with Alu Empire! We're excited to have you on board.\n\nWe specialize in premium aluminium solutions and would love to understand how we can serve your needs.\n\nFeel free to reply to this email, and one of our team members will get back to you shortly.\n\nBest regards,\nThe Alu Empire Team\n\n---\nIf you no longer wish to receive these emails, you can unsubscribe here:\n{{ $env.APP_URL }}/unsubscribe?token={{ $json.unsubscribe_token }}",
-              "type": "string"
-            }
-          ]
-        }
-      },
-      "id": "template-step-0",
-      "name": "Introduction Email",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [1800, 100]
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "subject",
-              "name": "emailSubject",
-              "value": "=Following up — {{ $json.name }}, how can we help?",
-              "type": "string"
-            },
-            {
-              "id": "body",
-              "name": "emailBody",
-              "value": "=Hi {{ $json.name }},\n\nJust checking in! We wanted to follow up on our earlier message.\n\nAt Alu Empire, we offer a wide range of aluminium products — from structural profiles to custom fabrication.\n\nWould you like to schedule a quick call to discuss your requirements?\n\nLooking forward to hearing from you!\n\nBest regards,\nThe Alu Empire Team\n\n---\nIf you no longer wish to receive these emails, you can unsubscribe here:\n{{ $env.APP_URL }}/unsubscribe?token={{ $json.unsubscribe_token }}",
-              "type": "string"
-            }
-          ]
-        }
-      },
-      "id": "template-step-1",
-      "name": "First Follow-up Email",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [1800, 300]
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "subject",
-              "name": "emailSubject",
-              "value": "=Quick update from Alu Empire",
-              "type": "string"
-            },
-            {
-              "id": "body",
-              "name": "emailBody",
-              "value": "=Hi {{ $json.name }},\n\nWe haven't heard back from you, so we wanted to share a few things our clients love about working with us:\n\n• Fast turnaround times\n• Competitive pricing on bulk orders\n• Custom sizing and finishing options\n\nIf any of these resonate with your needs, we'd love to chat.\n\nBest regards,\nThe Alu Empire Team\n\n---\nIf you no longer wish to receive these emails, you can unsubscribe here:\n{{ $env.APP_URL }}/unsubscribe?token={{ $json.unsubscribe_token }}",
-              "type": "string"
-            }
-          ]
-        }
-      },
-      "id": "template-step-2",
-      "name": "Second Follow-up Email",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [1800, 500]
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "subject",
-              "name": "emailSubject",
-              "value": "=Last check-in from Alu Empire",
-              "type": "string"
-            },
-            {
-              "id": "body",
-              "name": "emailBody",
-              "value": "=Hi {{ $json.name }},\n\nThis will be our last follow-up for now. We completely understand if the timing isn't right.\n\nWhenever you're ready to explore aluminium solutions, we'll be here. Simply reply to this email anytime.\n\nWishing you all the best!\n\nWarm regards,\nThe Alu Empire Team\n\n---\nIf you no longer wish to receive these emails, you can unsubscribe here:\n{{ $env.APP_URL }}/unsubscribe?token={{ $json.unsubscribe_token }}",
-              "type": "string"
-            }
-          ]
-        }
-      },
-      "id": "template-step-3",
-      "name": "Final Follow-up Email",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [1800, 700]
-    },
-    {
-      "parameters": {
-        "operation": "append",
-        "assignments": {
-          "assignments": [
-            {
-              "id": "merge-all",
-              "name": "=",
-              "value": "",
-              "type": "string"
-            }
-          ]
-        }
-      },
-      "id": "merge-templates",
-      "name": "Merge Templates",
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 3,
-      "position": [2100, 300]
-    },
-    {
-      "parameters": {
         "sendTo": "={{ $json.email }}",
-        "subject": "={{ $json.emailSubject }}",
-        "message": "={{ $json.emailBody }}",
+        "subject": "=Welcome to Alu Empire, {{ $json.name }}!",
+        "message": "=Hi {{ $json.name }},\n\nThank you for connecting with Alu Empire! We're excited to have you on board.\n\nWe specialize in premium aluminium solutions and would love to understand how we can serve your needs.\n\nFeel free to reply to this email, and one of our team members will get back to you shortly.\n\nBest regards,\nThe Alu Empire Team\n\n---\nIf you no longer wish to receive these emails, you can unsubscribe here:\n{{ $env.APP_URL }}/unsubscribe?token={{ $json.unsubscribe_token }}",
         "options": {
           "replyTo": "={{ $env.REPLY_TO_EMAIL || '' }}"
         }
       },
       "id": "send-email",
-      "name": "Send Email (Gmail)",
+      "name": "Send Welcome Email",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
-      "position": [2350, 300],
+      "position": [1500, 300],
       "credentials": {
         "gmailOAuth2": {
           "id": "",
@@ -432,13 +239,13 @@
             "id": "={{ $runIndex }}-{{ $json.id }}-{{ Date.now() }}",
             "contact_id": "={{ $json.id }}",
             "channel": "EMAIL",
-            "step": "={{ $json.current_step }}",
+            "step": "1",
             "status": "SENT",
             "recipient": "={{ $json.email }}",
             "sent_at": "={{ new Date().toISOString() }}",
             "attempted_at": "={{ new Date().toISOString() }}",
             "error": "",
-            "provider_message_id": "={{ $json.id || '' }}"
+            "provider_message_id": ""
           }
         }
       },
@@ -446,7 +253,7 @@
       "name": "Log SENT",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [2650, 200],
+      "position": [1800, 200],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "",
@@ -473,7 +280,7 @@
             "id": "={{ $runIndex }}-{{ $json.id }}-{{ Date.now() }}",
             "contact_id": "={{ $json.id }}",
             "channel": "EMAIL",
-            "step": "={{ $json.current_step }}",
+            "step": "1",
             "status": "FAILED",
             "recipient": "={{ $json.email }}",
             "sent_at": "",
@@ -487,41 +294,13 @@
       "name": "Log FAILED",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [2650, 450],
+      "position": [1800, 450],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "",
           "name": "Google Sheets - Alu Empire"
         }
       }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose"
-          },
-          "conditions": [
-            {
-              "id": "is-final-step",
-              "leftValue": "={{ Number($json.current_step) }}",
-              "rightValue": 3,
-              "operator": {
-                "type": "number",
-                "operation": "gte"
-              }
-            }
-          ],
-          "combinator": "and"
-        }
-      },
-      "id": "is-final-step",
-      "name": "Is Final Step?",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [2900, 200]
     },
     {
       "parameters": {
@@ -541,7 +320,7 @@
           "value": {
             "id": "={{ $json.id }}",
             "status": "COMPLETED",
-            "current_step": "={{ Number($json.current_step) + 1 }}",
+            "current_step": "1",
             "last_followup_at": "={{ new Date().toISOString() }}",
             "next_followup_at": "",
             "updated_at": "={{ new Date().toISOString() }}"
@@ -551,50 +330,11 @@
           "cellFormat": "USER_ENTERED"
         }
       },
-      "id": "update-completed",
+      "id": "mark-completed",
       "name": "Mark COMPLETED",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [3150, 100],
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "",
-          "name": "Google Sheets - Alu Empire"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "update",
-        "documentId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "={{ $env.GOOGLE_SHEET_ID }}"
-        },
-        "sheetName": {
-          "__rl": true,
-          "mode": "name",
-          "value": "Contacts"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "id": "={{ $json.id }}",
-            "current_step": "={{ Number($json.current_step) + 1 }}",
-            "last_followup_at": "={{ new Date().toISOString() }}",
-            "next_followup_at": "={{ new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString() }}",
-            "updated_at": "={{ new Date().toISOString() }}"
-          }
-        },
-        "options": {
-          "cellFormat": "USER_ENTERED"
-        }
-      },
-      "id": "update-next-step",
-      "name": "Advance to Next Step",
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.5,
-      "position": [3150, 300],
+      "position": [2050, 200],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "",
@@ -627,11 +367,11 @@
           "cellFormat": "USER_ENTERED"
         }
       },
-      "id": "update-failed",
+      "id": "mark-failed",
       "name": "Mark Contact FAILED",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [2900, 450],
+      "position": [2050, 450],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "",
@@ -656,14 +396,14 @@
       "main": [
         [
           {
-            "node": "Filter Eligible Contacts",
+            "node": "Filter: Opted-In & Not Yet Emailed",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Filter Eligible Contacts": {
+    "Filter: Opted-In & Not Yet Emailed": {
       "main": [
         [
           {
@@ -678,14 +418,14 @@
       "main": [
         [
           {
-            "node": "Re-Check Contact State",
+            "node": "Re-Check Consent",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Re-Check Contact State": {
+    "Re-Check Consent": {
       "main": [
         [
           {
@@ -700,90 +440,14 @@
       "main": [
         [
           {
-            "node": "Select Email Template",
+            "node": "Send Welcome Email",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Select Email Template": {
-      "main": [
-        [
-          {
-            "node": "Introduction Email",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "First Follow-up Email",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Second Follow-up Email",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Final Follow-up Email",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Introduction Email": {
-      "main": [
-        [
-          {
-            "node": "Send Email (Gmail)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "First Follow-up Email": {
-      "main": [
-        [
-          {
-            "node": "Send Email (Gmail)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Second Follow-up Email": {
-      "main": [
-        [
-          {
-            "node": "Send Email (Gmail)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Final Follow-up Email": {
-      "main": [
-        [
-          {
-            "node": "Send Email (Gmail)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Send Email (Gmail)": {
+    "Send Welcome Email": {
       "main": [
         [
           {
@@ -805,7 +469,7 @@
       "main": [
         [
           {
-            "node": "Is Final Step?",
+            "node": "Mark COMPLETED",
             "type": "main",
             "index": 0
           }
@@ -817,24 +481,6 @@
         [
           {
             "node": "Mark Contact FAILED",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Is Final Step?": {
-      "main": [
-        [
-          {
-            "node": "Mark COMPLETED",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Advance to Next Step",
             "type": "main",
             "index": 0
           }
@@ -858,5 +504,5 @@
   ],
   "triggerCount": 1,
   "updatedAt": "2026-07-17T10:00:00.000Z",
-  "versionId": "1"
+  "versionId": "2"
 }

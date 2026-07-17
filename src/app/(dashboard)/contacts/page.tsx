@@ -62,7 +62,7 @@ export default async function ContactsPage() {
                   <TableHead className="font-medium text-gray-600">Location</TableHead>
                   <TableHead className="font-medium text-gray-600">Consent</TableHead>
                   <TableHead className="font-medium text-gray-600">Status</TableHead>
-                  <TableHead className="font-medium text-gray-600">Follow-up</TableHead>
+                  <TableHead className="font-medium text-gray-600">Email Sent</TableHead>
                   <TableHead className="font-medium text-gray-600 whitespace-nowrap">Added Date</TableHead>
                   <TableHead className="text-right font-medium text-gray-600">Actions</TableHead>
                 </TableRow>
@@ -106,7 +106,7 @@ export default async function ContactsPage() {
                         location={contact.city} 
                         consent={consent} 
                         status={contact.status} 
-                        step={step} 
+                        emailSent={contact.current_step !== '0' || contact.status === 'COMPLETED' ? 'Yes' : 'No'} 
                         added={added} 
                       />
                     );
@@ -129,15 +129,15 @@ export default async function ContactsPage() {
   );
 }
 
-function ContactRow({ id, name, email, phone, initials, color, company, location, consent, status, step, added }: any) {
+function ContactRow({ id, name, email, phone, initials, color, company, location, consent, status, emailSent, added }: any) {
   let statusBadge;
-  if (status === "Active") {
+  if (status === "Active" || status === "ACTIVE") {
     statusBadge = <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 border border-emerald-200"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>{status}</Badge>;
-  } else if (status === "Paused") {
+  } else if (status === "Paused" || status === "PAUSED") {
     statusBadge = <Badge variant="secondary" className="bg-amber-50 text-amber-700 hover:bg-amber-50 border border-amber-200"><span className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5"></span>{status}</Badge>;
-  } else if (status === "Completed") {
+  } else if (status === "Completed" || status === "COMPLETED") {
     statusBadge = <Badge variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-50 border border-blue-200"><span className="w-1.5 h-1.5 rounded-full bg-blue-500 mr-1.5"></span>{status}</Badge>;
-  } else if (status === "No Consent") {
+  } else if (status === "No Consent" || status === "NO_CONSENT") {
     statusBadge = <Badge variant="secondary" className="bg-gray-100 text-gray-600 hover:bg-gray-100 border border-gray-200">{status}</Badge>;
   } else {
     statusBadge = <Badge variant="secondary" className="bg-red-50 text-red-700 hover:bg-red-50 border border-red-200">{status}</Badge>;
@@ -146,6 +146,10 @@ function ContactRow({ id, name, email, phone, initials, color, company, location
   let consentBadge = consent === "Opted In" 
     ? <span className="text-emerald-600 text-xs font-medium bg-emerald-50 px-2 py-1 rounded-md">{consent}</span>
     : <span className="text-gray-500 text-xs font-medium bg-gray-100 px-2 py-1 rounded-md">{consent}</span>;
+
+  const emailBadge = emailSent === 'Yes'
+    ? <span className="text-emerald-600 text-xs font-medium bg-emerald-50 px-2 py-1 rounded-md">Sent ✓</span>
+    : <span className="text-gray-500 text-xs font-medium bg-gray-100 px-2 py-1 rounded-md">Pending</span>;
 
   return (
     <TableRow className="hover:bg-gray-50/50">
@@ -165,7 +169,7 @@ function ContactRow({ id, name, email, phone, initials, color, company, location
       <TableCell className="text-gray-600 align-top pt-5">{location}</TableCell>
       <TableCell className="align-top pt-5">{consentBadge}</TableCell>
       <TableCell className="align-top pt-5">{statusBadge}</TableCell>
-      <TableCell className="text-gray-600 align-top pt-5">{step}</TableCell>
+      <TableCell className="align-top pt-5">{emailBadge}</TableCell>
       <TableCell className="text-gray-600 align-top pt-5 whitespace-nowrap">{added}</TableCell>
       <TableCell className="text-right align-top pt-5">
         <DropdownMenu>
