@@ -15,7 +15,7 @@ export function ContactsToolbar() {
   const currentStatus = searchParams.get("status") || "All";
   const [showFilters, setShowFilters] = useState(false);
   const [searchValue, setSearchValue] = useState(currentQuery);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function updateParams(q: string | null, status: string | null) {
     const params = new URLSearchParams();
