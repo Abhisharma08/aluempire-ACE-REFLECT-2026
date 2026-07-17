@@ -207,7 +207,7 @@ export default function JoinPage() {
               className="w-full h-12 text-base font-medium rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-400 shadow-lg shadow-slate-200 transition-all active:scale-[0.98]"
             >
               {isLoading ? <Loader2 className="w-5 h-5 mr-2 animate-spin text-amber-400" /> : null}
-              Submit Registration
+              Submit Now
             </Button>
           </form>
         </div>
