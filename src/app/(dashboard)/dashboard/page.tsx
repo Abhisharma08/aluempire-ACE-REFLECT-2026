@@ -1,4 +1,3 @@
-"use client";
 
 import { Users, Play, Mail, Clock, Plus, Menu, Send, MailOpen, CornerUpLeft, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,19 +5,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { AddContactDrawer } from "@/components/contacts/add-contact-drawer";
+import { StatusChart } from "@/components/dashboard/status-chart";
 import { getContacts } from "@/lib/contacts";
-
-const STATUS_DATA = [
-  { name: 'Active', value: 842, color: '#10b981' },
-  { name: 'Paused', value: 156, color: '#f59e0b' },
-  { name: 'Completed', value: 206, color: '#3b82f6' },
-  { name: 'Failed', value: 44, color: '#ef4444' }
-];
+import { getCommunicationLogs } from "@/lib/communication-log";
 
 export default async function Dashboard() {
   const contacts = await getContacts();
+  const logs = await getCommunicationLogs();
+  
   const totalContacts = contacts.length;
   const activeContacts = contacts.filter(c => c.status === 'ACTIVE').length;
   const pausedContacts = contacts.filter(c => c.status === 'PAUSED').length;
@@ -30,17 +25,50 @@ export default async function Dashboard() {
     { name: 'Paused', value: pausedContacts, color: '#f59e0b' },
     { name: 'Completed', value: completedContacts, color: '#3b82f6' },
     { name: 'Failed', value: failedContacts, color: '#ef4444' }
-  ].filter(s => s.value > 0); // Only show non-zero in pie chart
+  ].filter(s => s.value > 0);
 
-  // Fallback for pie chart if empty
   if (statusData.length === 0) {
     statusData.push({ name: 'No Data', value: 1, color: '#e5e7eb' });
   }
 
-  // Get most recent 5 contacts
   const recentContacts = [...contacts].sort((a, b) => {
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   }).slice(0, 5);
+
+  // Calculate Emails Sent
+  const emailsSent = logs.filter(l => l.channel === 'EMAIL' && l.status === 'SENT').length;
+  const emailsFailed = logs.filter(l => l.channel === 'EMAIL' && l.status === 'FAILED').length;
+  
+  // Calculate Due Today
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const nextWeek = new Date(today);
+  nextWeek.setDate(nextWeek.getDate() + 7);
+
+  let dueTodayCount = 0;
+  let dueTomorrowCount = 0;
+  let dueThisWeekCount = 0;
+
+  // Calculate Progress Steps
+  const stepCounts: Record<string, number> = {};
+
+  contacts.forEach(c => {
+    if (c.current_step && c.current_step !== '0') {
+      stepCounts[c.current_step] = (stepCounts[c.current_step] || 0) + 1;
+    }
+
+    if (c.next_followup_at) {
+      const nextDate = new Date(c.next_followup_at);
+      if (nextDate >= today && nextDate < tomorrow) dueTodayCount++;
+      if (nextDate >= tomorrow && nextDate < new Date(tomorrow.getTime() + 86400000)) dueTomorrowCount++;
+      if (nextDate >= today && nextDate < nextWeek) dueThisWeekCount++;
+    }
+  });
+
+  const maxStepCount = Math.max(1, ...Object.values(stepCounts), completedContacts);
+
   return (
     <div className="flex flex-col min-h-full">
       {/* Top Header */}
@@ -78,7 +106,7 @@ export default async function Dashboard() {
           />
           <MetricCard 
             title="Emails Sent" 
-            value="3,420" 
+            value={emailsSent.toString()} 
             subtitle="All time" 
             icon={<Mail className="w-5 h-5 text-blue-600" />} 
             iconBg="bg-blue-100" 
@@ -86,7 +114,7 @@ export default async function Dashboard() {
           />
           <MetricCard 
             title="Due Today" 
-            value="24" 
+            value={dueTodayCount.toString()} 
             subtitle="Need follow-up" 
             icon={<Clock className="w-5 h-5 text-amber-600" />} 
             iconBg="bg-amber-100" 
@@ -98,7 +126,7 @@ export default async function Dashboard() {
         <Card className="rounded-xl border-gray-100 shadow-sm overflow-hidden">
           <div className="p-6 border-b border-gray-100 flex justify-between items-center">
             <h3 className="font-semibold text-lg">Recent Contacts</h3>
-            <a href="#" className="text-indigo-600 text-sm font-medium hover:underline">View all contacts →</a>
+            <a href="/contacts" className="text-indigo-600 text-sm font-medium hover:underline">View all contacts →</a>
           </div>
           <Table>
             <TableHeader className="bg-gray-50/50">
@@ -164,24 +192,7 @@ export default async function Dashboard() {
             <h3 className="font-semibold text-sm mb-4 text-gray-700">Contacts by Status</h3>
             <div className="flex items-center gap-4">
               <div className="w-24 h-24 relative">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={statusData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={30}
-                      outerRadius={45}
-                      paddingAngle={2}
-                      dataKey="value"
-                      stroke="none"
-                    >
-                      {statusData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
+                <StatusChart data={statusData} />
               </div>
               <div className="flex-1 space-y-2">
                 {statusData.map(status => (
@@ -205,11 +216,10 @@ export default async function Dashboard() {
           <Card className="rounded-xl border-gray-100 shadow-sm p-6 lg:col-span-1">
             <h3 className="font-semibold text-sm mb-4 text-gray-700">Follow-up Progress</h3>
             <div className="space-y-3">
-              <ProgressRow label="Step 1" value={312} max={400} />
-              <ProgressRow label="Step 2" value={284} max={400} />
-              <ProgressRow label="Step 3" value={198} max={400} />
-              <ProgressRow label="Step 4" value={160} max={400} />
-              <ProgressRow label="Completed" value={206} max={400} isCompleted />
+              {[1, 2, 3, 4].map(step => (
+                <ProgressRow key={`step-${step}`} label={`Step ${step}`} value={stepCounts[step.toString()] || 0} max={maxStepCount} />
+              ))}
+              <ProgressRow label="Completed" value={completedContacts} max={maxStepCount} isCompleted />
             </div>
           </Card>
 
@@ -224,21 +234,21 @@ export default async function Dashboard() {
                   <div className="w-4 h-4 rounded bg-red-100 flex items-center justify-center"><Calendar className="w-3 h-3" /></div>
                   Today
                 </div>
-                <span className="font-bold text-red-600">24</span>
+                <span className="font-bold text-red-600">{dueTodayCount}</span>
               </div>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2 text-gray-600">
                   <div className="w-4 h-4 rounded bg-gray-100 flex items-center justify-center"><Calendar className="w-3 h-3 text-gray-500" /></div>
                   Tomorrow
                 </div>
-                <span className="font-medium text-gray-900">18</span>
+                <span className="font-medium text-gray-900">{dueTomorrowCount}</span>
               </div>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2 text-gray-600">
                   <div className="w-4 h-4 rounded bg-gray-100 flex items-center justify-center"><Calendar className="w-3 h-3 text-gray-500" /></div>
                   This Week
                 </div>
-                <span className="font-medium text-gray-900">96</span>
+                <span className="font-medium text-gray-900">{dueThisWeekCount}</span>
               </div>
             </div>
           </Card>
@@ -246,7 +256,7 @@ export default async function Dashboard() {
           <Card className="rounded-xl border-gray-100 shadow-sm p-6 lg:col-span-1">
             <div className="flex items-center gap-2 mb-4 text-gray-700">
               <Mail className="w-4 h-4 text-indigo-600" />
-              <h3 className="font-semibold text-sm">Emails (This Month)</h3>
+              <h3 className="font-semibold text-sm">Emails (All Time)</h3>
             </div>
             <div className="space-y-4 text-sm mt-6">
               <div className="flex justify-between items-center">
@@ -254,21 +264,21 @@ export default async function Dashboard() {
                   <Send className="w-4 h-4 text-gray-400" />
                   Sent
                 </div>
-                <span className="font-medium text-gray-900">342</span>
+                <span className="font-medium text-gray-900">{emailsSent}</span>
               </div>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2 text-gray-600">
-                  <MailOpen className="w-4 h-4 text-blue-500" />
-                  Opened
+                  <MailOpen className="w-4 h-4 text-red-500" />
+                  Failed
                 </div>
-                <span className="font-medium text-gray-900">128</span>
+                <span className="font-medium text-gray-900">{emailsFailed}</span>
               </div>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2 text-gray-600">
                   <CornerUpLeft className="w-4 h-4 text-emerald-500" />
-                  Replied
+                  Total Logs
                 </div>
-                <span className="font-medium text-gray-900">26</span>
+                <span className="font-medium text-gray-900">{logs.length}</span>
               </div>
             </div>
           </Card>
