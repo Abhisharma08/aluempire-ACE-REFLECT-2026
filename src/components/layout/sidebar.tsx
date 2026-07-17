@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Home, Users, Settings, LogOut, ChevronDown } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { logout } from "@/app/actions/auth";
 
 export default function Sidebar() {
   return (
@@ -19,7 +20,7 @@ export default function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 px-4 py-4 space-y-2">
         <Link
-          href="/"
+          href="/dashboard"
           className="flex items-center gap-3 px-4 py-3 bg-indigo-600 text-white rounded-xl font-medium transition-colors"
         >
           <Home className="w-5 h-5" />
@@ -56,10 +57,12 @@ export default function Sidebar() {
           <ChevronDown className="w-4 h-4 text-slate-400" />
         </div>
         
-        <button className="flex items-center gap-3 px-4 py-3 w-full text-left text-slate-300 hover:bg-white/5 hover:text-white rounded-xl font-medium transition-colors mt-2">
-          <LogOut className="w-5 h-5" />
-          Sign out
-        </button>
+        <form action={logout}>
+          <button type="submit" className="flex items-center gap-3 px-4 py-3 w-full text-left text-slate-300 hover:bg-white/5 hover:text-white rounded-xl font-medium transition-colors mt-2">
+            <LogOut className="w-5 h-5" />
+            Sign out
+          </button>
+        </form>
       </div>
     </aside>
   );
