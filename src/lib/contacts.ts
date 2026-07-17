@@ -3,7 +3,7 @@ import { Contact } from "@/types/contact";
 
 // Headers required for the Contacts worksheet
 export const CONTACTS_HEADERS = [
-  'id', 'name', 'email', 'phone', 'company', 'city', 
+  'id', 'name', 'email', 'phone', 'company', 'city', 'product_interest',
   'opt_in', 'opt_in_at', 'unsubscribed_at', 'unsubscribe_token', 
   'status', 'current_step', 'next_followup_at', 'last_followup_at', 
   'created_at', 'updated_at', 'archived_at'
@@ -38,6 +38,7 @@ export async function getContacts(): Promise<Contact[]> {
         phone: row.get('phone') || '',
         company: row.get('company') || '',
         city: row.get('city') || '',
+        product_interest: row.get('product_interest') || '',
         opt_in: row.get('opt_in') === 'TRUE' ? 'TRUE' : 'FALSE',
         opt_in_at: row.get('opt_in_at') || '',
         unsubscribed_at: row.get('unsubscribed_at') || '',
@@ -68,6 +69,7 @@ export async function addContact(contact: Partial<Contact>): Promise<Contact> {
     phone: contact.phone || '',
     company: contact.company || '',
     city: contact.city || '',
+    product_interest: (contact as any).product_interest || '',
     opt_in: contact.opt_in || 'FALSE',
     opt_in_at: contact.opt_in_at || '',
     unsubscribed_at: contact.unsubscribed_at || '',

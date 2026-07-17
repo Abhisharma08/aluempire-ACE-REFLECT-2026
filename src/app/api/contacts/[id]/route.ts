@@ -9,6 +9,7 @@ const updateContactSchema = z.object({
   phone: z.string().trim().optional(),
   company: z.string().trim().optional(),
   city: z.string().trim().optional(),
+  product_interest: z.string().trim().optional(),
 });
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

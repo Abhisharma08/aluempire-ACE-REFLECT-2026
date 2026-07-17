@@ -10,6 +10,7 @@ const contactSchema = z.object({
   phone: z.string().trim().optional().default(""),
   company: z.string().trim().optional().default(""),
   city: z.string().trim().optional().default(""),
+  product_interest: z.string().trim().optional().default(""),
   opt_in: z.enum(["TRUE", "FALSE"]).default("FALSE"),
   note: z.string().trim().optional().default("")
 });
@@ -61,6 +62,7 @@ export async function POST(req: NextRequest) {
       phone: data.phone,
       company: data.company,
       city: data.city,
+      product_interest: data.product_interest,
       opt_in: data.opt_in,
       opt_in_at: data.opt_in === 'TRUE' ? now : '',
       status: data.opt_in === 'TRUE' ? 'ACTIVE' : 'NO_CONSENT',

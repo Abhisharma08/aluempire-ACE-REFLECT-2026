@@ -7,6 +7,7 @@ export interface Contact {
   phone: string;
   company: string;
   city: string;
+  product_interest: string;
   opt_in: 'TRUE' | 'FALSE';
   opt_in_at: string;
   unsubscribed_at: string;
