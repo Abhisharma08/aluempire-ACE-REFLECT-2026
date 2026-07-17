@@ -9,7 +9,7 @@ import { Plus, Loader2, UserPlus, User, Mail, Phone, Building2, MapPin, Sparkles
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export function AddContactDrawer({ trigger }: { trigger?: React.ReactElement }) {
+export function AddContactDrawer({ trigger }: { trigger?: React.ReactElement<any> }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

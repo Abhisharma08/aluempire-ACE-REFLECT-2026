@@ -8,7 +8,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 interface EditContactDrawerProps {
-  trigger?: React.ReactElement;
+  trigger?: React.ReactElement<any>;
   contact: {
     id: string;
     name: string;
