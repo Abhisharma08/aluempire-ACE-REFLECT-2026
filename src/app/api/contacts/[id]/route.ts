@@ -13,7 +13,7 @@ const updateContactSchema = z.object({
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const ip = req.headers.get("x-forwarded-for") || req.ip || "127.0.0.1";
+    const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "127.0.0.1";
     if (!apiRateLimiter.check(ip)) {
       return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
     }
