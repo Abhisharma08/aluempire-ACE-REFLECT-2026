@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     const parseResult = contactSchema.safeParse(body);
     if (!parseResult.success) {
       return NextResponse.json(
-        { error: "Validation failed", details: parseResult.error.errors }, 
+        { error: "Validation failed", details: parseResult.error.issues }, 
         { status: 400 }
       );
     }

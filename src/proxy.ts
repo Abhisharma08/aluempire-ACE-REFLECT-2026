@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   // Check for the auth cookie
   const authCookie = request.cookies.get('followup_auth_token');
 

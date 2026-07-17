@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AddContactDrawer } from "@/components/contacts/add-contact-drawer";
 import { getContacts } from "@/lib/contacts";
 
@@ -174,16 +174,18 @@ function ContactRow({ name, email, phone, initials, color, company, location, co
             </Button>
           } />
           <DropdownMenuContent align="end" className="w-[160px]">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem>Edit contact</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            {status === "Active" ? (
-              <DropdownMenuItem className="text-amber-600">Pause follow-up</DropdownMenuItem>
-            ) : status === "Paused" ? (
-              <DropdownMenuItem className="text-emerald-600">Resume follow-up</DropdownMenuItem>
-            ) : null}
-            <DropdownMenuItem className="text-red-600">Remove consent</DropdownMenuItem>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem>View details</DropdownMenuItem>
+              <DropdownMenuItem>Edit contact</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              {status === "Active" ? (
+                <DropdownMenuItem className="text-amber-600">Pause follow-up</DropdownMenuItem>
+              ) : status === "Paused" ? (
+                <DropdownMenuItem className="text-emerald-600">Resume follow-up</DropdownMenuItem>
+              ) : null}
+              <DropdownMenuItem className="text-red-600">Remove consent</DropdownMenuItem>
+            </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       </TableCell>

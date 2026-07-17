@@ -1,11 +1,11 @@
 "use client";
 
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Loader2 } from "lucide-react";
+import { Plus, Loader2, UserPlus, User, Mail, Phone, Building2, MapPin, Sparkles } from "lucide-react";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -53,87 +53,137 @@ export function AddContactDrawer({ trigger }: { trigger?: React.ReactElement }) 
   }
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger render={
-        trigger || (
-          <Button className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg">
-            <Plus className="w-4 h-4 mr-2" />
-            Add Contact
-          </Button>
-        )
-      } />
-      <SheetContent className="w-[400px] sm:w-[540px] overflow-y-auto bg-white border-l-0 shadow-2xl">
+    <>
+      {trigger ? (
+        React.cloneElement(trigger, { onClick: () => setIsOpen(true) })
+      ) : (
+        <Button onClick={() => setIsOpen(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-sm shadow-indigo-200 transition-all active:scale-95">
+          <Plus className="w-4 h-4 mr-2" />
+          Add Contact
+        </Button>
+      )}
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetContent className="w-full sm:w-[540px] max-w-[100vw] overflow-y-auto bg-white/95 backdrop-blur-xl border-l-0 shadow-2xl p-0 flex flex-col">
         <form onSubmit={onSubmit} className="flex flex-col h-full">
-          <SheetHeader className="pb-6 border-b border-gray-100">
-            <SheetTitle className="text-xl font-semibold">Add Contact</SheetTitle>
-            <p className="text-sm text-gray-500">Add a new contact and start follow-up.</p>
-          </SheetHeader>
           
-          <div className="py-6 space-y-6 flex-1">
+          {/* Header section with gradient line */}
+          <div className="relative border-b border-gray-100 bg-gray-50/50 p-6 pt-10">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-white rounded-xl shadow-sm border border-gray-100 text-indigo-600">
+                <UserPlus className="w-6 h-6" />
+              </div>
+              <div>
+                <SheetTitle className="text-xl font-semibold text-gray-900">New Contact</SheetTitle>
+                <p className="text-sm text-gray-500 mt-1">Add a new lead to your dashboard and automate their follow-up.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="p-6 space-y-8 flex-1">
             {error && (
-              <div className="p-3 bg-red-50 text-red-600 text-sm rounded-md border border-red-100">
+              <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100 flex items-center">
+                <div className="w-1.5 h-1.5 rounded-full bg-red-500 mr-2 shrink-0"></div>
                 {error}
               </div>
             )}
             
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Name <span className="text-red-500">*</span></label>
-              <Input name="name" required placeholder="Enter full name" className="bg-white border-gray-200" />
+            {/* Section 1: Personal Info */}
+            <div className="space-y-4">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Personal Details</h3>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium text-gray-700">Name <span className="text-red-500">*</span></label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input name="name" required placeholder="Full name" className="pl-9 bg-gray-50/50 border-gray-200 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all rounded-lg" />
+                  </div>
+                </div>
+                
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium text-gray-700">Email <span className="text-red-500">*</span></label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input name="email" type="email" required placeholder="Email address" className="pl-9 bg-gray-50/50 border-gray-200 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all rounded-lg" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Input name="phone" type="tel" placeholder="+1 (555) 000-0000" className="pl-9 bg-gray-50/50 border-gray-200 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all rounded-lg" />
+                </div>
+              </div>
+            </div>
+
+            <div className="h-px bg-gray-100"></div>
+
+            {/* Section 2: Work & Location */}
+            <div className="space-y-4">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Work & Location</h3>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium text-gray-700">Company</label>
+                  <div className="relative">
+                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input name="company" placeholder="Company name" className="pl-9 bg-gray-50/50 border-gray-200 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all rounded-lg" />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium text-gray-700">City</label>
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input name="city" placeholder="San Francisco, CA" className="pl-9 bg-gray-50/50 border-gray-200 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all rounded-lg" />
+                  </div>
+                </div>
+              </div>
             </div>
             
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Email <span className="text-red-500">*</span></label>
-              <Input name="email" type="email" required placeholder="Enter email address" className="bg-white border-gray-200" />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Phone Number</label>
-              <Input name="phone" type="tel" placeholder="Enter phone number" className="bg-white border-gray-200" />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Company</label>
-              <Input name="company" placeholder="Enter company name" className="bg-white border-gray-200" />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">City</label>
-              <Input name="city" placeholder="Enter city" className="bg-white border-gray-200" />
-            </div>
-
-            <div className="space-y-4 pt-2">
-              <label className="text-sm font-medium text-gray-900">Follow-up</label>
-              <div className="flex items-start space-x-3">
-                <Checkbox name="opt_in" id="follow-up" defaultChecked className="mt-1 border-indigo-600 data-[state=checked]:bg-indigo-600 data-[state=checked]:text-white" />
+            {/* Section 3: Automation */}
+            <div className="bg-gradient-to-br from-indigo-50 to-white border border-indigo-100 p-4 rounded-xl shadow-sm relative overflow-hidden">
+              <Sparkles className="absolute -right-4 -top-4 w-20 h-20 text-indigo-500/10 rotate-12" />
+              <div className="relative z-10 flex items-start space-x-3">
+                <Checkbox name="opt_in" id="follow-up" defaultChecked className="mt-0.5 w-5 h-5 border-indigo-600 data-checked:bg-indigo-600 data-checked:text-white rounded shadow-sm" />
                 <div>
                   <label
                     htmlFor="follow-up"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    className="block text-sm font-semibold text-indigo-900 leading-none cursor-pointer"
                   >
-                    Start follow-up sequence automatically
+                    Start automated follow-up
                   </label>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Contact will enter the follow-up sequence from Step 1.
+                  <p className="text-xs text-indigo-600/70 mt-1.5 leading-relaxed">
+                    Contact will immediately enter the follow-up sequence from Step 1.
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-2 pt-2">
-              <label className="text-sm font-medium">Note (Optional)</label>
-              <Textarea name="note" placeholder="Add any note about this contact" className="min-h-[100px] bg-white border-gray-200 resize-none" />
+            {/* Section 4: Notes */}
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-gray-700">Note (Optional)</label>
+              <Textarea name="note" placeholder="Add any extra context about this contact..." className="min-h-[100px] bg-gray-50/50 border-gray-200 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all rounded-lg resize-none p-3" />
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-6 border-t border-gray-100 mt-auto">
-            <Button type="button" onClick={() => setIsOpen(false)} variant="outline" className="px-6 rounded-lg border-gray-200 bg-white hover:bg-gray-50 text-gray-700">Cancel</Button>
-            <Button type="submit" disabled={isLoading} className="px-6 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white">
-              {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-              Add Contact
+          {/* Footer */}
+          <div className="flex justify-end gap-3 p-6 border-t border-gray-100 bg-gray-50/80 mt-auto backdrop-blur-sm">
+            <Button type="button" onClick={() => setIsOpen(false)} variant="outline" className="px-6 rounded-lg border-gray-200 bg-white hover:bg-gray-50 text-gray-700 shadow-sm transition-all active:scale-95">Cancel</Button>
+            <Button type="submit" disabled={isLoading} className="px-6 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200 transition-all active:scale-95 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
+              <span className="relative flex items-center">
+                {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                Create Contact
+              </span>
             </Button>
           </div>
         </form>
       </SheetContent>
-    </Sheet>
+      </Sheet>
+    </>
   );
 }

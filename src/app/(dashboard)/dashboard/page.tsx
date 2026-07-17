@@ -83,7 +83,9 @@ export default async function Dashboard() {
             <h2 className="text-2xl font-bold tracking-tight text-gray-900">Good morning, Admin 👋</h2>
             <p className="text-gray-500 mt-1">Here's what's happening with your contacts today.</p>
           </div>
-          <AddContactDrawer />
+          <div>
+            <AddContactDrawer />
+          </div>
         </div>
 
         {/* Metrics */}
@@ -131,12 +133,12 @@ export default async function Dashboard() {
           <Table>
             <TableHeader className="bg-gray-50/50">
               <TableRow>
-                <TableHead className="font-medium text-gray-500">Contact</TableHead>
-                <TableHead className="font-medium text-gray-500">Company</TableHead>
-                <TableHead className="font-medium text-gray-500">Status</TableHead>
-                <TableHead className="font-medium text-gray-500">Follow-up</TableHead>
-                <TableHead className="font-medium text-gray-500">Next Email</TableHead>
-                <TableHead className="font-medium text-gray-500">Added</TableHead>
+                <TableHead className="font-medium text-gray-600 w-[250px]">Contact</TableHead>
+                <TableHead className="font-medium text-gray-600">Company</TableHead>
+                <TableHead className="font-medium text-gray-600 w-[120px]">Status</TableHead>
+                <TableHead className="font-medium text-gray-600 w-[100px]">Follow-up</TableHead>
+                <TableHead className="font-medium text-gray-600 w-[120px]">Next Email</TableHead>
+                <TableHead className="font-medium text-gray-600 whitespace-nowrap w-[100px]">Added</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
