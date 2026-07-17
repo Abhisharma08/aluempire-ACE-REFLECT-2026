@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { addContact, findContactByEmail, getContacts } from "@/lib/contacts";
+import { apiRateLimiter } from "@/lib/rate-limit";
 
 // Zod schema matching the Contact Validation requirements
 const contactSchema = z.object({
@@ -25,6 +26,11 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get("x-forwarded-for") || req.ip || "127.0.0.1";
+    if (!apiRateLimiter.check(ip)) {
+      return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+    }
+
     const body = await req.json();
     
     // Validate input

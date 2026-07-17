@@ -5,6 +5,9 @@ import { ChevronLeft, Mail, Phone, Building2, MapPin, Calendar, CheckCircle2, XC
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContactActions } from "./contact-actions-client";
+import { EditContactDrawer } from "@/components/contacts/edit-contact-drawer";
+import { Button } from "@/components/ui/button";
+import { Edit2 } from "lucide-react";
 
 export default async function ContactDetailsPage({
   params,
@@ -54,6 +57,15 @@ export default async function ContactDetailsPage({
             </div>
           </div>
           <div className="flex gap-2">
+            <EditContactDrawer
+              contact={contact}
+              trigger={
+                <Button variant="outline" className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50">
+                  <Edit2 className="w-4 h-4 mr-2" />
+                  Edit
+                </Button>
+              }
+            />
              <ContactActions contactId={contact.id} status={contact.status} />
           </div>
         </div>
