@@ -68,6 +68,7 @@ export default async function ContactsPage({
                   <TableHead className="font-medium text-gray-600 w-[250px]">Contact</TableHead>
                   <TableHead className="font-medium text-gray-600">Company</TableHead>
                   <TableHead className="font-medium text-gray-600">Location</TableHead>
+                  <TableHead className="font-medium text-gray-600">Product Interest</TableHead>
                   <TableHead className="font-medium text-gray-600">Consent</TableHead>
                   <TableHead className="font-medium text-gray-600">Status</TableHead>
                   <TableHead className="font-medium text-gray-600">Email Sent</TableHead>
@@ -112,6 +113,7 @@ export default async function ContactsPage({
                         color={color} 
                         company={contact.company} 
                         location={contact.city} 
+                        productInterest={contact.product_interest}
                         consent={consent} 
                         status={contact.status} 
                         emailSent={contact.current_step !== '0' || contact.status === 'COMPLETED' ? 'Yes' : 'No'} 

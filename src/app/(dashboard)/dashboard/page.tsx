@@ -131,6 +131,7 @@ export default async function Dashboard() {
               <TableRow>
                 <TableHead className="font-medium text-gray-600 w-[250px]">Contact</TableHead>
                 <TableHead className="font-medium text-gray-600">Company</TableHead>
+                <TableHead className="font-medium text-gray-600">Product Interest</TableHead>
                 <TableHead className="font-medium text-gray-600 w-[120px]">Status</TableHead>
                 <TableHead className="font-medium text-gray-600 w-[120px]">Email Sent</TableHead>
                 <TableHead className="font-medium text-gray-600 whitespace-nowrap w-[100px]">Added</TableHead>
@@ -164,6 +165,7 @@ export default async function Dashboard() {
                       initials={contact.name.charAt(0).toUpperCase()} 
                       color={color} 
                       company={contact.company} 
+                      productInterest={contact.product_interest}
                       status={contact.status} 
                       emailSent={contact.current_step !== '0' || contact.status === 'COMPLETED' ? 'Yes' : 'No'} 
                       added={added} 
@@ -309,7 +311,7 @@ function MetricCard({ title, value, subtitle, icon, iconBg, sparklineColor }: an
   );
 }
 
-function ContactRow({ name, email, initials, color, company, status, emailSent, added }: any) {
+function ContactRow({ name, email, initials, color, company, productInterest, status, emailSent, added }: any) {
   let statusBadge;
   if (status === "ACTIVE" || status === "Active") {
     statusBadge = <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 border border-emerald-200"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>{status}</Badge>;
@@ -339,6 +341,13 @@ function ContactRow({ name, email, initials, color, company, status, emailSent, 
         </div>
       </TableCell>
       <TableCell className="text-gray-600">{company}</TableCell>
+      <TableCell className="text-gray-600">
+        {productInterest ? (
+          <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-md">{productInterest}</span>
+        ) : (
+          <span className="text-gray-400 text-xs">—</span>
+        )}
+      </TableCell>
       <TableCell>{statusBadge}</TableCell>
       <TableCell>{emailBadge}</TableCell>
       <TableCell className="text-gray-600">{added}</TableCell>

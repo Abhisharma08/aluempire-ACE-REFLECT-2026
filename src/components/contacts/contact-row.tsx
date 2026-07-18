@@ -9,7 +9,7 @@ import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { EditContactDrawer } from "./edit-contact-drawer";
 
-export function ContactRow({ id, name, email, phone, initials, color, company, location, consent, status, emailSent, added }: any) {
+export function ContactRow({ id, name, email, phone, initials, color, company, location, productInterest, consent, status, emailSent, added }: any) {
   let statusBadge;
   if (status === "Active" || status === "ACTIVE") {
     statusBadge = <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 border border-emerald-200"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>{status}</Badge>;
@@ -47,6 +47,13 @@ export function ContactRow({ id, name, email, phone, initials, color, company, l
       </TableCell>
       <TableCell className="text-gray-600 align-top pt-5">{company}</TableCell>
       <TableCell className="text-gray-600 align-top pt-5">{location}</TableCell>
+      <TableCell className="text-gray-600 align-top pt-5">
+        {productInterest ? (
+          <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-md">{productInterest}</span>
+        ) : (
+          <span className="text-gray-400 text-xs">—</span>
+        )}
+      </TableCell>
       <TableCell className="align-top pt-5">{consentBadge}</TableCell>
       <TableCell className="align-top pt-5">{statusBadge}</TableCell>
       <TableCell className="align-top pt-5">{emailBadge}</TableCell>
