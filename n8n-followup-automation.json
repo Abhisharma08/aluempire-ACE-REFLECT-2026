@@ -16,7 +16,10 @@
       "name": "Every 30 Minutes",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [0, 300]
+      "position": [
+        0,
+        300
+      ]
     },
     {
       "parameters": {
@@ -36,7 +39,10 @@
       "name": "Read All Contacts",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [250, 300],
+      "position": [
+        250,
+        300
+      ],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "",
@@ -55,7 +61,7 @@
           "conditions": [
             {
               "id": "condition-opt-in",
-              "leftValue": "={{ $json.opt_in }}",
+              "leftValue": "={{ String($json.opt_in).toUpperCase() }}",
               "rightValue": "TRUE",
               "operator": {
                 "type": "string",
@@ -73,7 +79,7 @@
             },
             {
               "id": "condition-not-sent",
-              "leftValue": "={{ $json.current_step }}",
+              "leftValue": "={{ String($json.current_step) }}",
               "rightValue": "0",
               "operator": {
                 "type": "string",
@@ -97,35 +103,10 @@
       "name": "Filter: Opted-In & Not Yet Emailed",
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2.2,
-      "position": [500, 300]
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose"
-          },
-          "conditions": [
-            {
-              "id": "condition-due",
-              "leftValue": "={{ new Date($json.next_followup_at).getTime() }}",
-              "rightValue": "={{ Date.now() }}",
-              "operator": {
-                "type": "number",
-                "operation": "lte"
-              }
-            }
-          ],
-          "combinator": "and"
-        }
-      },
-      "id": "filter-due-now",
-      "name": "Due Now?",
-      "type": "n8n-nodes-base.filter",
-      "typeVersion": 2.2,
-      "position": [750, 300]
+      "position": [
+        500,
+        300
+      ]
     },
     {
       "parameters": {
@@ -153,7 +134,10 @@
       "name": "Re-Check Consent",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [1000, 300],
+      "position": [
+        1000,
+        300
+      ],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "",
@@ -172,7 +156,7 @@
           "conditions": [
             {
               "id": "recheck-opt-in",
-              "leftValue": "={{ $json.opt_in }}",
+              "leftValue": "={{ String($json.opt_in).toUpperCase() }}",
               "rightValue": "TRUE",
               "operator": {
                 "type": "string",
@@ -196,22 +180,26 @@
       "name": "Still Eligible?",
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2.2,
-      "position": [1250, 300]
+      "position": [
+        1250,
+        300
+      ]
     },
     {
       "parameters": {
         "sendTo": "={{ $json.email }}",
         "subject": "=Welcome to Alu Empire, {{ $json.name }}!",
-        "message": "=Hi {{ $json.name }},\n\nThank you for connecting with Alu Empire! We're excited to have you on board.\n\nWe specialize in premium aluminium solutions and would love to understand how we can serve your needs.\n\nFeel free to reply to this email, and one of our team members will get back to you shortly.\n\nBest regards,\nThe Alu Empire Team\n\n---\nIf you no longer wish to receive these emails, you can unsubscribe here:\n{{ $env.APP_URL }}/unsubscribe?token={{ $json.unsubscribe_token }}",
-        "options": {
-          "replyTo": "={{ $env.REPLY_TO_EMAIL || '' }}"
-        }
+        "message": "=<!DOCTYPE html><html><head><style>body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 0; } .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); } .header { background-color: #0f172a; padding: 40px 20px; text-align: center; border-bottom: 4px solid #fbbf24; } .header img { height: 60px; filter: brightness(0) invert(1); } .content { padding: 40px 30px; color: #334155; line-height: 1.6; font-size: 16px; } .content h1 { color: #0f172a; font-size: 24px; margin-top: 0; } .product-box { background-color: #f1f5f9; border-left: 4px solid #fbbf24; padding: 15px 20px; margin: 25px 0; border-radius: 0 8px 8px 0; } .footer { background-color: #f8fafc; padding: 20px; text-align: center; color: #94a3b8; font-size: 12px; border-top: 1px solid #e2e8f0; } .btn { display: inline-block; background-color: #fbbf24; color: #0f172a; text-decoration: none; padding: 12px 28px; border-radius: 6px; font-weight: bold; margin-top: 10px; }</style></head><body><div class=\"container\"><div class=\"header\"><img src=\"https://res.cloudinary.com/ddqqlfsjp/image/upload/v1752230081/Alu_Empire_Logo-removebg-preview_nrlo91.png\" alt=\"Alu Empire\"></div><div class=\"content\"><h1>Welcome to ACE REFLECT 2026, {{ $json.name }}!</h1><p>Thank you for stopping by Booth J-1. It was an absolute pleasure connecting with you and learning more about your architectural requirements.</p><div class=\"product-box\"><strong>Your Area of Interest:</strong> <br><span style=\"color: #0f172a; font-weight: 500;\">{{ $json.product_interest || 'Premium Architectural Solutions' }}</span></div><p>Our team is currently reviewing your details. We will be in touch shortly with our exclusive catalog and to discuss how Alu Empire & ISTO Furniture can elevate your upcoming projects.</p><center><a href=\"https://aluempire.com\" class=\"btn\">Explore Our Portfolio</a></center></div><div class=\"footer\">&copy; 2026 Alu Empire & ISTO Furniture. All rights reserved.<br>Gurugram, India<br><br><a href=\"{{ $env.APP_URL }}/unsubscribe?token={{ $json.unsubscribe_token }}\" style=\"color: #94a3b8; text-decoration: underline;\">Unsubscribe</a></div></div></body></html>",
+        "options": {}
       },
       "id": "send-email",
       "name": "Send Welcome Email",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
-      "position": [1500, 300],
+      "position": [
+        1500,
+        300
+      ],
       "credentials": {
         "gmailOAuth2": {
           "id": "",
@@ -253,7 +241,10 @@
       "name": "Log SENT",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [1800, 200],
+      "position": [
+        1800,
+        200
+      ],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "",
@@ -294,7 +285,10 @@
       "name": "Log FAILED",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [1800, 450],
+      "position": [
+        1800,
+        450
+      ],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "",
@@ -334,7 +328,10 @@
       "name": "Mark COMPLETED",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [2050, 200],
+      "position": [
+        2050,
+        200
+      ],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "",
@@ -371,7 +368,10 @@
       "name": "Mark Contact FAILED",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
-      "position": [2050, 450],
+      "position": [
+        2050,
+        450
+      ],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "",
@@ -404,17 +404,6 @@
       ]
     },
     "Filter: Opted-In & Not Yet Emailed": {
-      "main": [
-        [
-          {
-            "node": "Due Now?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Due Now?": {
       "main": [
         [
           {

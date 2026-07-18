@@ -3,6 +3,8 @@ import { z } from "zod";
 import { addContact, findContactByEmail, getContacts } from "@/lib/contacts";
 import { apiRateLimiter } from "@/lib/rate-limit";
 
+export const dynamic = "force-dynamic";
+
 // Zod schema matching the Contact Validation requirements
 const contactSchema = z.object({
   name: z.string().min(1, "Name is required").trim(),

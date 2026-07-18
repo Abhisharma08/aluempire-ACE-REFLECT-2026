@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 
 import { Users, Play, Mail, Clock, Plus, Menu, Send, MailOpen, CornerUpLeft, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
