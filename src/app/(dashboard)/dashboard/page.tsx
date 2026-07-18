@@ -232,13 +232,6 @@ export default async function Dashboard() {
                 </div>
                 <span className="font-medium text-gray-900">{dueTomorrowCount}</span>
               </div>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2 text-gray-600">
-                  <div className="w-4 h-4 rounded bg-gray-100 flex items-center justify-center"><Calendar className="w-3 h-3 text-gray-500" /></div>
-                  Due This Week
-                </div>
-                <span className="font-medium text-gray-900">{dueThisWeekCount}</span>
-              </div>
             </div>
           </Card>
 
