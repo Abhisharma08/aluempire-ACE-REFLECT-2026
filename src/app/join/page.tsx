@@ -40,7 +40,9 @@ export default function JoinPage() {
         throw new Error(result.error || "Failed to submit registration");
       }
 
+      event.currentTarget.reset();
       setIsSuccess(true);
+      setTimeout(() => setIsSuccess(false), 2000);
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred. Please try again.");
     } finally {
@@ -48,35 +50,18 @@ export default function JoinPage() {
     }
   }
 
-  if (isSuccess) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4">
-        <div className="max-w-md w-full bg-white rounded-3xl shadow-xl border border-gray-100 p-10 text-center relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 to-amber-600"></div>
-          
-          <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle2 className="w-10 h-10 text-green-500" />
-          </div>
-          
-          <h2 className="text-3xl font-bold text-slate-900 mb-4">You're on the list!</h2>
-          <p className="text-slate-600 mb-8 leading-relaxed">
-            Thank you for connecting with us at ACE REFLECT 2026. Our team will reach out to you shortly with our exclusive catalog.
-          </p>
-          
-          <Button 
-            onClick={() => setIsSuccess(false)}
-            variant="outline"
-            className="rounded-xl border-gray-200 text-slate-600 hover:bg-slate-50"
-          >
-            Submit another entry
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4 py-8 lg:py-12">
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4 py-8 lg:py-12 relative">
+      {/* Success Popup Toast */}
+      {isSuccess && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-slate-800">
+            <CheckCircle2 className="w-5 h-5 text-amber-400" />
+            <span className="font-medium">Data saved successfully!</span>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-5xl w-full bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden grid grid-cols-1 lg:grid-cols-5">
         
         {/* Header / Left Column */}
