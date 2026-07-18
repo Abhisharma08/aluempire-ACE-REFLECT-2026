@@ -16,7 +16,8 @@ export default function JoinPage() {
     setIsLoading(true);
     setError(null);
 
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
     const data = {
       name: formData.get("name") as string,
       email: formData.get("email") as string,
@@ -40,7 +41,7 @@ export default function JoinPage() {
         throw new Error(result.error || "Failed to submit registration");
       }
 
-      event.currentTarget.reset();
+      form.reset();
       setIsSuccess(true);
       setTimeout(() => setIsSuccess(false), 2000);
     } catch (err: any) {
